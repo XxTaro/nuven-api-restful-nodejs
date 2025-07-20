@@ -1,4 +1,4 @@
-import { PrismaClient } from '../../generated/prisma/index.js';
+import { PrismaClient } from '../../generated/prisma/client.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
@@ -15,20 +15,20 @@ export const register = async (req, res) => {
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = await prisma.user.create({
+    const user = await prisma.users.create({
       data: {
         name,
         email,
-        password: hashedPassword,
+        passwd_hash: hashedPassword,
       },
     });
 
-    const { password: _, ...userWithoutPassword } = user;
+    const { passwd_hash: _, ...userWithoutPassword } = user;
     res.status(201).json(userWithoutPassword);
 
   } catch (error) {
     if (error.code === PRISMA_UNIQUE_CONSTRAINT_ERROR_CODE) {
-      return res.status(409).json({ message: 'Este email já está em uso.' });
+      return res.status(409).json({ message: 'Este email já está em uso.', error: '' });
     }
     res.status(500).json({ message: 'Erro ao registrar usuário.', error: error.message });
   }
@@ -42,13 +42,13 @@ export const login = async (req, res) => {
   }
 
   try {
-    const user = await prisma.user.findUnique({ where: { email } });
+    const user = await prisma.users.findUnique({ where: { email } });
 
     if (!user) {
       return res.status(404).json({ message: 'Usuário não encontrado.' });
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    const isPasswordValid = await bcrypt.compare(password, user.passwd_hash);
 
     if (!isPasswordValid) {
       return res.status(401).json({ message: 'Credenciais inválidas.' });
