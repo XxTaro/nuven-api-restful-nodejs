@@ -1,0 +1,41 @@
+services:
+  postgres_db:
+    image: postgres:15-alpine
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=docker_user
+      - POSTGRES_PASSWORD=docker_password
+      - POSTGRES_DB=docker_db
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    networks:
+      - default
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "docker_user", "-d", "docker_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  nuven-api-nodejs:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    networks:
+      - default
+    depends_on:
+      postgres_db:
+        condition: service_healthy
+    command: sh -c "npx prisma migrate deploy && node src/server.js"
+
+
+volumes:
+  pgdata:
+
+networks:
+  default:
+    driver: bridge
