@@ -22,12 +22,12 @@ export const getRecordsByQuery = async (req, res) => {
         ;
     
         if (records.length === 0) {
-        return res.status(404).json({ message: 'No records found for the given keyword.' });
+            return res.status(404).json({ message: 'Não foram encontrados registros a partir da palavra-chave fornecida.' });
         }
     
         res.json(records);
     } catch (error) {
-        console.error('Error fetching records:', error);
+        console.error('Erro ao pesquisar pelos registros:', error);
         res.status(500).json({ message: 'Internal server error.', error: error.message });
     }
 };

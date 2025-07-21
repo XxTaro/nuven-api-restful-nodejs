@@ -3,6 +3,7 @@ import authRoutes from './routes/auth_routes.js';
 import userRoutes from './routes/user_routes.js';
 import datasetRoutes from './routes/dataset_routes.js';
 import recordRoutes from './routes/record_routes.js';
+import queryRoutes from './routes/query_routes.js';
 
 const app = express();
 app.use(express.json());
@@ -13,6 +14,7 @@ app.use('/auth', authRoutes);
 app.use('/users', userRoutes);
 app.use('/datasets', datasetRoutes);
 app.use('/records', recordRoutes);
+app.use('/queries', queryRoutes);
 
 app.get('/', (_req, res) => {
   res.send('API está funcionando!');
