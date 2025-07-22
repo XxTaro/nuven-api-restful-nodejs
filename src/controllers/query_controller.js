@@ -61,3 +61,23 @@ export const createQueryWithAI = async (req, res) => {
     res.status(500).json({ message: 'Erro ao conectar com o serviço de IA ou processar a requisição.' });
   }
 };
+
+export const getQueriesByUser = async (req, res) => {
+  const userId = req.user.userId;
+
+  try {
+    const queries = await prisma.queries.findMany({
+      where: { user_id: userId },
+      orderBy: { created_at: 'desc' },
+    });
+
+    if (queries.length === 0) {
+      return res.status(404).json({ message: 'Nenhuma query encontrada.' });
+    }
+
+    res.json(queries);
+  } catch (error) {
+    console.error('Erro ao buscar queries:', error);
+    res.status(500).json({ message: 'Erro ao buscar queries.' });
+  }
+}
