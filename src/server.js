@@ -4,11 +4,18 @@ import userRoutes from './routes/user_routes.js';
 import datasetRoutes from './routes/dataset_routes.js';
 import recordRoutes from './routes/record_routes.js';
 import queryRoutes from './routes/query_routes.js';
+import swaggerUi from 'swagger-ui-express';
+import { createRequire } from 'module';
+
+const PORT = process.env.PORT || 3000;
 
 const app = express();
 app.use(express.json());
 
-const PORT = process.env.PORT || 3000;
+const require = createRequire(import.meta.url);
+const swaggerFile = require('./swagger-output.json');
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
 app.use('/auth', authRoutes);
 app.use('/users', userRoutes);

@@ -13,6 +13,8 @@ RUN npx prisma generate
 
 COPY . .
 
+RUN npm run swagger
+
 EXPOSE 3000
 
 CMD ["node", "src/server.js"]

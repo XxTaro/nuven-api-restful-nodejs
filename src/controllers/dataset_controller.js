@@ -5,6 +5,14 @@ import csv from 'csv-parser';
 const prisma = new PrismaClient();
 
 export const uploadDataset = async (req, res) => {
+  /*
+        #swagger.consumes = ['multipart/form-data']  
+        #swagger.parameters['datasetFile'] = {
+            in: 'formData',
+            type: 'file',
+            required: 'true',
+            description: 'Upload de um novo dataset (.csv ou .pdf)',
+    } */
   if (!req.file) {
     return res.status(400).json({ message: 'Nenhum arquivo enviado ou formato inválido.' });
   }
